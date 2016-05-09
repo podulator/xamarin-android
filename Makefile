@@ -35,7 +35,7 @@ git-update-submodules: git-reset-submodules
 	nuget restore
 	(cd external/Java.Interop && git pull origin master && nuget restore)
 
-fix-linux:
+fix-linux-pre-build:
 	cat Configuration.Override.props.in \
 		| sed 's@clang<@clang-3.8<@gm' \
 		| sed 's@clang++<@clang++-3.8<@gm' \
@@ -44,6 +44,28 @@ fix-linux:
 	sed -i 's@LINUX_JAVA_INCLUDE_DIRS          = /usr/lib/jvm/default-java/include/@LINUX_JAVA_INCLUDE_DIRS          = /usr/lib/jvm/default-java/include@gm' external/Java.Interop/build-tools/scripts/jdk.mk
 	sed -i 's@LINUX_JAVA_JNI_OS_INCLUDE_DIR    = ..DESKTOP_JAVA_JNI_INCLUDE_DIR./linux@LINUX_JAVA_JNI_OS_INCLUDE_DIR    = $(DESKTOP_JAVA_JNI_INCLUDE_DIR)/include/linux@gm' external/Java.Interop/build-tools/scripts/jdk.mk
 	sed -i 's@rm src/Java.Runtime.Environment/Java.Runtime.Environment.dll.config@rm -f src/Java.Runtime.Environment/Java.Runtime.Environment.dll.config@gm' external/Java.Interop/Makefile
+
+fix-linux-post-build:
+	# copy targets to output
+	cp ./src/Xamarin.Android.Build.Tasks/*.targets bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/
+
+	# Replace Ionic.Zip by another version!
+	#
+	#   An "Path is empty" exception message is triggered by that DotNetZip tries to pass "" to Directory.Create() in ZipEntry.Extract, line 760.
+	#   The cause is that the variable targetFileName contain the path using "\" as directory separator. When run on linux the path is interpreted as a single filename making the directory path "".
+	#     - outFileName = outFileName.Replace("/","\");
+	#     + outFileName = outFileName.Replace('/', Path.DirectorySeparatorChar);
+	( \
+		rm -r tmp-DotNetZip \
+		mkdir tmp-DotNetZip \
+		cd tmp-DotNetZip && ( \
+			wget -O DotNetZip.zip https://www.nuget.org/api/v2/package/DotNetZip/1.9.8 \
+			unzip DotNetZip.zip \
+			cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/mandroid/
+			cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/Ionic.Zip.dll
+		) \
+	)
+
 
 java-interop:
 	(cd external/Java.Interop && nuget restore && make all)
@@ -57,9 +79,7 @@ java-interop:
 	) > bin/$(CONFIGURATION)/bin/generator
 	chmod +x bin/$(CONFIGURATION)/bin/generator
 
-all-linux: fix-linux java-interop all
-	cp ./src/Xamarin.Android.Build.Tasks/*.targets bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/
-	cp ./bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/mandroid/
+all-linux: fix-linux-pre-build java-interop all fix-linux-post-build
 
 all-debian: build-dep-debian all-linux
 
@@ -81,5 +101,6 @@ build-dep-debian:
 	sudo apt update
 	sudo apt install clang-3.8
 	# 32 bit libraries for android toolchain
+	sudo dpkg --add-architecture i386
 	sudo apt install zlib1g:i386
 
