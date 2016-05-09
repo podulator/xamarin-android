@@ -55,16 +55,9 @@ fix-linux-post-build:
 	#   The cause is that the variable targetFileName contain the path using "\" as directory separator. When run on linux the path is interpreted as a single filename making the directory path "".
 	#     - outFileName = outFileName.Replace("/","\");
 	#     + outFileName = outFileName.Replace('/', Path.DirectorySeparatorChar);
-	( \
-		rm -rf tmp-DotNetZip \
-		mkdir tmp-DotNetZip \
-		cd tmp-DotNetZip && ( \
-			wget -O DotNetZip.zip https://www.nuget.org/api/v2/package/DotNetZip/1.9.8 \
-			unzip DotNetZip.zip \
-			cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/mandroid/ \
-			cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/Ionic.Zip.dll \
-		) \
-	)
+	rm -rf tmp-DotNetZip
+	mkdir tmp-DotNetZip
+	( cd tmp-DotNetZip && (	wget -O DotNetZip.zip https://www.nuget.org/api/v2/package/DotNetZip/1.9.8 ; unzip DotNetZip.zip ; cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/mandroid/ ; cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/Ionic.Zip.dll ))
 
 
 java-interop:
