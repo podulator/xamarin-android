@@ -61,8 +61,8 @@ fix-linux-post-build:
 		cd tmp-DotNetZip && ( \
 			wget -O DotNetZip.zip https://www.nuget.org/api/v2/package/DotNetZip/1.9.8 \
 			unzip DotNetZip.zip \
-			cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/mandroid/
-			cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/Ionic.Zip.dll
+			cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/mandroid/ \
+			cp lib/net20/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/Ionic.Zip.dll \
 		) \
 	)
 
