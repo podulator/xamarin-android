@@ -45,7 +45,7 @@ fix-linux:
 	sed -i 's@LINUX_JAVA_JNI_OS_INCLUDE_DIR    = ..DESKTOP_JAVA_JNI_INCLUDE_DIR./linux@LINUX_JAVA_JNI_OS_INCLUDE_DIR    = $(DESKTOP_JAVA_JNI_INCLUDE_DIR)/include/linux@gm' external/Java.Interop/build-tools/scripts/jdk.mk
 	sed -i 's@rm src/Java.Runtime.Environment/Java.Runtime.Environment.dll.config@rm -f src/Java.Runtime.Environment/Java.Runtime.Environment.dll.config@gm' external/Java.Interop/Makefile
 
-full-java-interop:
+java-interop:
 	(cd external/Java.Interop && nuget restore && make all)
 	mkdir -p bin/$(CONFIGURATION)/bin
 	mkdir -p bin/$(CONFIGURATION)/lib/mandroid
@@ -57,8 +57,9 @@ full-java-interop:
 	) > bin/$(CONFIGURATION)/bin/generator
 	chmod +x bin/$(CONFIGURATION)/bin/generator
 
-all-linux: fix-linux full-java-interop all
+all-linux: fix-linux java-interop all
 	cp ./src/Xamarin.Android.Build.Tasks/*.targets bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/
+	cp ./bin/$(CONFIGURATION)/lib/xbuild/Xamarin/Android/Ionic.Zip.dll bin/$(CONFIGURATION)/lib/mandroid/
 
 all-debian: build-dep-debian all-linux
 
