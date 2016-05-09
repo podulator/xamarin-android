@@ -56,7 +56,7 @@ fix-linux-post-build:
 	#     - outFileName = outFileName.Replace("/","\");
 	#     + outFileName = outFileName.Replace('/', Path.DirectorySeparatorChar);
 	( \
-		rm -r tmp-DotNetZip \
+		rm -rf tmp-DotNetZip \
 		mkdir tmp-DotNetZip \
 		cd tmp-DotNetZip && ( \
 			wget -O DotNetZip.zip https://www.nuget.org/api/v2/package/DotNetZip/1.9.8 \
