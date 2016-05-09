@@ -36,7 +36,10 @@ git-update-submodules: git-reset-submodules
 	(cd external/Java.Interop && git pull origin master && nuget restore)
 
 fix-linux:
-	cp Configuration.Override.props.in Configuration.Override.props
+	cat Configuration.Override.props.in \
+		| sed 's@clang<@clang-3.8<@gm' \
+		| sed 's@clang++<@clang++-3.8<@gm' \
+		> Configuration.Override.props
 	sed -i 's@= Release.AnyCPU@= Release|Any CPU@gm' Xamarin.Android.sln
 	sed -i 's@LINUX_JAVA_INCLUDE_DIRS          = /usr/lib/jvm/default-java/include/@LINUX_JAVA_INCLUDE_DIRS          = /usr/lib/jvm/default-java/include@gm' external/Java.Interop/build-tools/scripts/jdk.mk
 	sed -i 's@LINUX_JAVA_JNI_OS_INCLUDE_DIR    = ..DESKTOP_JAVA_JNI_INCLUDE_DIR./linux@LINUX_JAVA_JNI_OS_INCLUDE_DIR    = $(DESKTOP_JAVA_JNI_INCLUDE_DIR)/include/linux@gm' external/Java.Interop/build-tools/scripts/jdk.mk
