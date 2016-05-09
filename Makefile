@@ -64,21 +64,21 @@ all-debian: build-dep-debian all-linux
 
 build-dep-debian:
 	# cleanup
-        sudo rm -f /etc/apt/sources.list.d/llvm.list
-        # mono 4.4
-        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-        (echo "deb http://download.mono-project.com/repo/debian wheezy main"; echo "deb-src http://download.mono-project.com/repo/debian wheezy main") | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
-        (echo "deb http://download.mono-project.com/repo/debian beta main";echo "deb-src http://download.mono-project.com/repo/debian beta main") | sudo tee /etc/apt/sources.list.d/mono-xamarin-beta.list
-       sudo apt update
-       sudo apt install mono-devel referenceassemblies-pcl
-       sudo apt-get build-dep mono
-        # llvm 3.8
-        echo '(grep UBUNTU_CODENAME /etc/os-release || dpkg --status tzdata|grep Provides | sed 's@-@=@') | cut -f2 -d=' > .codename.sh
-        $(eval CODENAME := $(shell bash .codename.sh))
-        (echo "deb http://llvm.org/apt/$(CODENAME)/ llvm-toolchain-$(CODENAME)-3.8 main";echo "deb-src http://llvm.org/apt/$(CODENAME)/ llvm-toolchain-$(CODENAME)-3.8 main") | sudo tee /etc/apt/sources.list.d/llvm.list
-        wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
-        sudo apt update
-        sudo apt install clang-3.8
+	sudo rm -f /etc/apt/sources.list.d/llvm.list
+	# mono 4.4
+	sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+	(echo "deb http://download.mono-project.com/repo/debian wheezy main"; echo "deb-src http://download.mono-project.com/repo/debian wheezy main") | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+	(echo "deb http://download.mono-project.com/repo/debian beta main";echo "deb-src http://download.mono-project.com/repo/debian beta main") | sudo tee /etc/apt/sources.list.d/mono-xamarin-beta.list
+	sudo apt update
+	sudo apt install mono-devel referenceassemblies-pcl
+	sudo apt-get build-dep mono
+	# llvm 3.8
+	echo '(grep UBUNTU_CODENAME /etc/os-release || dpkg --status tzdata|grep Provides | sed 's@-@=@') | cut -f2 -d=' > .codename.sh
+	$(eval CODENAME := $(shell bash .codename.sh))
+	(echo "deb http://llvm.org/apt/$(CODENAME)/ llvm-toolchain-$(CODENAME)-3.8 main";echo "deb-src http://llvm.org/apt/$(CODENAME)/ llvm-toolchain-$(CODENAME)-3.8 main") | sudo tee /etc/apt/sources.list.d/llvm.list
+	wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
+	sudo apt update
+	sudo apt install clang-3.8
 
 
 
