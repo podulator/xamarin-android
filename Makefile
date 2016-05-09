@@ -80,6 +80,6 @@ build-dep-debian:
 	wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key|sudo apt-key add -
 	sudo apt update
 	sudo apt install clang-3.8
-
-
+	# 32 bit libraries for android toolchain
+	sudo apt install zlib1g:i386
 
