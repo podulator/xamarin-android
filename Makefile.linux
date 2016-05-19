@@ -46,6 +46,9 @@ fix-linux-pre-build:
 	sed -i 's@LINUX_JAVA_INCLUDE_DIRS          = /usr/lib/jvm/default-java/include/@LINUX_JAVA_INCLUDE_DIRS          = /usr/lib/jvm/default-java/include@gm' external/Java.Interop/build-tools/scripts/jdk.mk
 	sed -i 's@LINUX_JAVA_JNI_OS_INCLUDE_DIR    = ..DESKTOP_JAVA_JNI_INCLUDE_DIR./linux@LINUX_JAVA_JNI_OS_INCLUDE_DIR    = $(DESKTOP_JAVA_JNI_INCLUDE_DIR)/include/linux@gm' external/Java.Interop/build-tools/scripts/jdk.mk
 	sed -i 's@rm src/Java.Runtime.Environment/Java.Runtime.Environment.dll.config@rm -f src/Java.Runtime.Environment/Java.Runtime.Environment.dll.config@gm' external/Java.Interop/Makefile
+	
+	test -f ./external/Java.Interop/lib/mono.linq.expressions/tools/patch-constraints2.exe || (mv ./external/Java.Interop/lib/mono.linq.expressions/tools/patch-constraints.exe ./external/Java.Interop/lib/mono.linq.expressions/tools/patch-constraints2.exe ; (echo '#!/bin/bash'; echo 'mono tools/patch-constraints2.exe "$@"'; echo 'true') > ./external/Java.Interop/lib/mono.linq.expressions/tools/patch-constraints.exe ; chmod +x ./external/Java.Interop/lib/mono.linq.expressions/tools/patch-constraints.exe)
+	mv /opt/xamarin-android/Xamarin.Android.sln x | perl -n -e 'my @lines = <STDIN>; while (@lines > 0) { my $l = shift @lines; if ($l =~ /^Project.*?Test/) { shift @lines; } else { print $l; } } ' ; mv x /opt/xamarin-android/Xamarin.Android.sln
 
 fix-linux-post-build:
 	# copy targets to output
